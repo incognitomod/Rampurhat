@@ -1,12 +1,12 @@
 // Firebase imports from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } 
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Firebase config (your snippet)
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAIBaheScEGv-5j8EV-xccCr6m0V9MmkpA",
   authDomain: "rampurhat-one.firebaseapp.com",
@@ -24,18 +24,24 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Sign-in function
-async function signIn() {
-  try {
-    await signInWithPopup(auth, provider);
-    alert("Signed in successfully!");
-    loadItems(); // Load items after sign-in
-  } catch (error) {
-    alert("Sign-in failed: " + error.message);
-  }
+// Sign-in function for mobile
+function signIn() {
+  signInWithRedirect(auth, provider);
 }
 
-// Post an item
+// Handle redirect result after returning from Google
+getRedirectResult(auth)
+  .then((result) => {
+    if (result.user) {
+      alert("Signed in as " + result.user.email);
+      loadItems(); // load items after sign-in
+    }
+  })
+  .catch((error) => {
+    console.error("Sign-in error:", error);
+  });
+
+// Post an item to Firestore
 async function postItem(title, price) {
   if (!auth.currentUser) {
     alert("Sign in first!");
@@ -49,16 +55,19 @@ async function postItem(title, price) {
       timestamp: Date.now()
     });
     alert("Item posted!");
-    loadItems(); // Refresh items list
+    // Clear input fields
+    document.getElementById("itemTitle").value = "";
+    document.getElementById("itemPrice").value = "";
+    loadItems(); // refresh item list
   } catch (err) {
     alert("Error posting: " + err.message);
   }
 }
 
-// Load and display items
+// Load and display items from Firestore
 async function loadItems() {
   const itemsList = document.getElementById("itemsList");
-  itemsList.innerHTML = "";
+  itemsList.innerHTML = ""; // clear current items
   try {
     const querySnapshot = await getDocs(collection(db, "items"));
     querySnapshot.forEach((doc) => {
@@ -81,4 +90,5 @@ window.addEventListener("DOMContentLoaded", () => {
     const price = parseFloat(document.getElementById("itemPrice").value);
     postItem(title, price);
   });
+  loadItems(); // load items on page load if already signed in
 });
