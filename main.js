@@ -1,9 +1,8 @@
-// Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } 
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 // Firebase config
@@ -24,13 +23,16 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Sign-in using popup (avoids missing initial state error)
+// Current user
+let currentUser = null;
+
+// Sign-in
 function signIn() {
   signInWithPopup(auth, provider)
     .then(result => {
-      const user = result.user;
-      document.getElementById("userStatus").innerText = "Signed in as " + (user.displayName || user.email);
-      loadItems(); // load items after sign-in
+      currentUser = result.user;
+      document.getElementById("userStatus").innerText = "Signed in as " + (currentUser.displayName || currentUser.email);
+      loadItems();
     })
     .catch(err => {
       console.error("Sign-in popup error:", err);
@@ -38,9 +40,9 @@ function signIn() {
     });
 }
 
-// Post an item
+// Post Item
 async function postItem(title, price) {
-  if (!auth.currentUser) {
+  if (!currentUser) {
     alert("Sign in first!");
     return;
   }
@@ -48,40 +50,89 @@ async function postItem(title, price) {
     alert("Enter both title and price");
     return;
   }
-  try {
-    await addDoc(collection(db, "items"), {
-      title,
-      price,
-      uid: auth.currentUser.uid,
-      timestamp: Date.now()
-    });
-    document.getElementById("itemTitle").value = "";
-    document.getElementById("itemPrice").value = "";
-    loadItems();
-  } catch(err) {
-    alert("Error posting: " + err.message);
-  }
+  await addDoc(collection(db, "items"), {
+    title,
+    price,
+    uid: currentUser.uid,
+    timestamp: Date.now(),
+    sold: false
+  });
+  document.getElementById("itemTitle").value = "";
+  document.getElementById("itemPrice").value = "";
+  loadItems();
 }
 
-// Load and display items
-async function loadItems() {
+// Buy Item
+async function buyItem(docId) {
+  await updateDoc(doc(db, "items", docId), { sold: true });
+  loadItems();
+}
+
+// Delete Item
+async function deleteItem(docId) {
+  await deleteDoc(doc(db, "items", docId));
+  loadItems();
+}
+
+// Edit Item
+async function editItem(docId, currentTitle, currentPrice) {
+  const newTitle = prompt("Edit title:", currentTitle);
+  if (newTitle === null) return;
+  const newPrice = prompt("Edit price:", currentPrice);
+  if (newPrice === null) return;
+  await updateDoc(doc(db, "items", docId), { title: newTitle, price: parseFloat(newPrice) });
+  loadItems();
+}
+
+// Load Items
+async function loadItems(sort = "none") {
   const itemsList = document.getElementById("itemsList");
   itemsList.innerHTML = "";
-  try {
-    const querySnapshot = await getDocs(collection(db, "items"));
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = "itemCard";
-      div.innerHTML = `
-        <strong>${data.title}</strong>
-        <div class="itemPrice">₹${data.price}</div>
-      `;
-      itemsList.appendChild(div);
-    });
-  } catch(err) {
-    console.error("Error loading items:", err);
-  }
+
+  let q;
+  if (sort === "low") q = query(collection(db, "items"), orderBy("price", "asc"));
+  else if (sort === "high") q = query(collection(db, "items"), orderBy("price", "desc"));
+  else q = collection(db, "items");
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const div = document.createElement("div");
+    div.className = "itemCard" + (data.sold ? " sold" : "");
+    div.innerHTML = `
+      <strong>${data.title}</strong>
+      <div class="itemPrice">₹${data.price}</div>
+    `;
+
+    if (!data.sold) {
+      const buyBtn = document.createElement("button");
+      buyBtn.className = "btn";
+      buyBtn.textContent = "Buy Now";
+      buyBtn.onclick = () => buyItem(docSnap.id);
+      div.appendChild(buyBtn);
+    } else {
+      const soldLabel = document.createElement("span");
+      soldLabel.textContent = "SOLD";
+      soldLabel.style.color = "red";
+      div.appendChild(soldLabel);
+    }
+
+    if (currentUser && currentUser.uid === data.uid) {
+      const editBtn = document.createElement("button");
+      editBtn.className = "btn";
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => editItem(docSnap.id, data.title, data.price);
+      div.appendChild(editBtn);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn";
+      deleteBtn.textContent = "Delete";
+      deleteBtn.onclick = () => deleteItem(docSnap.id);
+      div.appendChild(deleteBtn);
+    }
+
+    itemsList.appendChild(div);
+  });
 }
 
 // Event listeners
@@ -92,5 +143,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const price = parseFloat(document.getElementById("itemPrice").value);
     postItem(title, price);
   });
-  loadItems(); // load items on page load if already signed in
+  document.getElementById("sortPrice").addEventListener("change", (e) => {
+    loadItems(e.target.value);
+  });
 });
