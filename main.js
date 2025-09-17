@@ -1,4 +1,4 @@
-// Firebase imports from CDN
+// Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } 
@@ -6,7 +6,7 @@ import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult }
 import { getFirestore, collection, addDoc, getDocs } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Firebase configuration
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAIBaheScEGv-5j8EV-xccCr6m0V9MmkpA",
   authDomain: "rampurhat-one.firebaseapp.com",
@@ -24,60 +24,72 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Sign-in function for mobile
+// Sign-in
 function signIn() {
-  signInWithRedirect(auth, provider);
+  try {
+    sessionStorage.setItem('signin_state', 'initiated'); // avoid missing state
+    signInWithRedirect(auth, provider);
+  } catch(err) {
+    console.error("Sign-in failed:", err);
+  }
 }
 
-// Handle redirect result after returning from Google
+// Handle redirect result
 getRedirectResult(auth)
-  .then((result) => {
+  .then(result => {
     if (result.user) {
-      alert("Signed in as " + result.user.email);
-      loadItems(); // load items after sign-in
+      const user = result.user;
+      document.getElementById("userStatus").innerText = "Signed in as " + (user.displayName || user.email);
+      loadItems();
+      sessionStorage.removeItem('signin_state');
     }
   })
-  .catch((error) => {
-    console.error("Sign-in error:", error);
+  .catch(err => {
+    console.error("Sign-in error:", err);
   });
 
-// Post an item to Firestore
+// Post an item
 async function postItem(title, price) {
   if (!auth.currentUser) {
     alert("Sign in first!");
     return;
   }
+  if (!title || !price) {
+    alert("Enter both title and price");
+    return;
+  }
   try {
     await addDoc(collection(db, "items"), {
-      title: title,
-      price: price,
+      title,
+      price,
       uid: auth.currentUser.uid,
       timestamp: Date.now()
     });
-    alert("Item posted!");
-    // Clear input fields
     document.getElementById("itemTitle").value = "";
     document.getElementById("itemPrice").value = "";
-    loadItems(); // refresh item list
-  } catch (err) {
+    loadItems();
+  } catch(err) {
     alert("Error posting: " + err.message);
   }
 }
 
-// Load and display items from Firestore
+// Load and display items
 async function loadItems() {
   const itemsList = document.getElementById("itemsList");
-  itemsList.innerHTML = ""; // clear current items
+  itemsList.innerHTML = "";
   try {
     const querySnapshot = await getDocs(collection(db, "items"));
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(doc => {
       const data = doc.data();
       const div = document.createElement("div");
       div.className = "itemCard";
-      div.innerHTML = `<strong>${data.title}</strong><br>Price: ₹${data.price}`;
+      div.innerHTML = `
+        <strong>${data.title}</strong>
+        <div class="itemPrice">₹${data.price}</div>
+      `;
       itemsList.appendChild(div);
     });
-  } catch (err) {
+  } catch(err) {
     console.error("Error loading items:", err);
   }
 }
