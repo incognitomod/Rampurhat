@@ -1,76 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rampurhat One</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 2rem;
-      background: #f4f4f4;
-    }
-    h1, h2 {
-      color: #333;
-    }
-    p {
-      color: #555;
-    }
-    input {
-      padding: 8px;
-      margin: 5px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: 200px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      margin: 10px 5px;
-      background: #007bff;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 6px;
-      cursor: pointer;
-      border: none;
-      font-size: 16px;
-    }
-    #itemsList {
-      margin-top: 20px;
-    }
-    .itemCard {
-      background: #fff;
-      padding: 10px;
-      margin: 10px auto;
-      width: 250px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rampurhat One Marketplace</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --glass-bg: rgba(255,255,255,0.05);
+  --glass-border: rgba(255,255,255,0.2);
+  --primary-color: #FFD700;
+  --secondary-color: #FF9933;
+  --bg-dark: #0F172A;
+  --text-light: #F1F5F9;
+  --btn-hover: rgba(255,255,255,0.2);
+}
+body {
+  margin: 0; padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+header {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem auto;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+input, button {
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  border: none;
+  outline: none;
+  margin: 0.4rem 0;
+}
+input {
+  width: 100%;
+  max-width: 250px;
+}
+button {
+  cursor: pointer;
+  background: var(--secondary-color);
+  color: #000;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+button:hover {
+  background: var(--primary-color);
+}
+#itemsList .itemCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0;
+  padding: 0.8rem 1rem;
+}
+#userStatus {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+</style>
 </head>
 <body>
+
+<header>
   <h1>Rampurhat One</h1>
-  <p>Your marketplace prototype is live!</p>
+  <p id="userStatus">Not signed in</p>
+  <button id="signin">Sign In with Google</button>
+</header>
 
-  <!-- Buy Now Button (static) -->
-  <a class="btn" href="#">Buy Now</a>
+<main class="container">
+  <section class="glass-card">
+    <h2>Post an Item</h2>
+    <input type="text" id="itemTitle" placeholder="Item Title" />
+    <input type="number" id="itemPrice" placeholder="Price in ₹" />
+    <button id="postItemBtn">Post Item</button>
+  </section>
 
-  <!-- Google Sign-In -->
-  <button id="signin" class="btn">Sign In with Google</button>
+  <section class="glass-card">
+    <h2>Items Posted</h2>
+    <div id="itemsList"></div>
+  </section>
 
-  <!-- Post Item Section -->
-  <h2>Post an Item</h2>
-  <input type="text" id="itemTitle" placeholder="Item Title" />
-  <input type="number" id="itemPrice" placeholder="Price" />
-  <button id="postItemBtn" class="btn">Post Item</button>
+  <section class="glass-card">
+    <h2>Buy Now</h2>
+    <p>Buttons will activate payments or links here.</p>
+    <button disabled>Buy First Item</button>
+  </section>
+</main>
 
-  <!-- Items List -->
-  <h2>Items Posted</h2>
-  <div id="itemsList"></div>
-
-  <!-- Firebase + Main Script -->
-  <script type="module" src="main.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
