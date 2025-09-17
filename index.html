@@ -14,20 +14,34 @@
     h1 {
       color: #333;
     }
+    p {
+      color: #555;
+    }
     .btn {
       display: inline-block;
       padding: 10px 20px;
-      margin-top: 20px;
+      margin: 10px 5px;
       background: #007bff;
       color: #fff;
       text-decoration: none;
       border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
   <h1>Rampurhat One</h1>
   <p>Your marketplace prototype is live!</p>
+
+  <!-- Buy Now Button -->
   <a class="btn" href="#">Buy Now</a>
+
+  <!-- Google Sign-In Button -->
+  <button id="signin" class="btn">Sign In with Google</button>
+
+  <!-- Firebase + Main Script -->
+  <script type="module" src="main.js"></script>
 </body>
 </html>
