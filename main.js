@@ -1,4 +1,3 @@
-// Firebase imports from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } 
@@ -6,7 +5,7 @@ import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult }
 import { getFirestore, collection, addDoc, getDocs } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Firebase configuration
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAIBaheScEGv-5j8EV-xccCr6m0V9MmkpA",
   authDomain: "rampurhat-one.firebaseapp.com",
@@ -17,78 +16,65 @@ const firebaseConfig = {
   measurementId: "G-F5TJGPF9F3"
 };
 
-// Initialize Firebase
+// Init Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Sign-in function for mobile
+// Sign in
 function signIn() {
   signInWithRedirect(auth, provider);
 }
+getRedirectResult(auth).then((result)=>{
+  if(result.user){
+    document.getElementById("userStatus").innerText = "Signed in as " + result.user.displayName;
+    loadItems();
+  }
+}).catch((err)=>console.error(err));
 
-// Handle redirect result after returning from Google
-getRedirectResult(auth)
-  .then((result) => {
-    if (result.user) {
-      alert("Signed in as " + result.user.email);
-      loadItems(); // load items after sign-in
-    }
-  })
-  .catch((error) => {
-    console.error("Sign-in error:", error);
-  });
-
-// Post an item to Firestore
-async function postItem(title, price) {
-  if (!auth.currentUser) {
+// Post item
+async function postItem(title, price){
+  if(!auth.currentUser){
     alert("Sign in first!");
     return;
   }
-  try {
-    await addDoc(collection(db, "items"), {
-      title: title,
-      price: price,
-      uid: auth.currentUser.uid,
-      timestamp: Date.now()
+  try{
+    await addDoc(collection(db,"items"),{
+      title, price, uid: auth.currentUser.uid, timestamp: Date.now()
     });
-    alert("Item posted!");
-    // Clear input fields
     document.getElementById("itemTitle").value = "";
     document.getElementById("itemPrice").value = "";
-    loadItems(); // refresh item list
-  } catch (err) {
-    alert("Error posting: " + err.message);
+    loadItems();
+  }catch(err){
+    alert("Error: "+err.message);
   }
 }
 
-// Load and display items from Firestore
-async function loadItems() {
-  const itemsList = document.getElementById("itemsList");
-  itemsList.innerHTML = ""; // clear current items
-  try {
-    const querySnapshot = await getDocs(collection(db, "items"));
-    querySnapshot.forEach((doc) => {
+// Load items
+async function loadItems(){
+  const list = document.getElementById("itemsList");
+  list.innerHTML="";
+  try{
+    const snapshot = await getDocs(collection(db,"items"));
+    snapshot.forEach((doc)=>{
       const data = doc.data();
       const div = document.createElement("div");
-      div.className = "itemCard";
-      div.innerHTML = `<strong>${data.title}</strong><br>Price: ₹${data.price}`;
-      itemsList.appendChild(div);
+      div.className="itemCard glass-card";
+      div.innerHTML = `<span>${data.title}</span><span>₹${data.price}</span>`;
+      list.appendChild(div);
     });
-  } catch (err) {
-    console.error("Error loading items:", err);
-  }
+  }catch(err){console.error(err);}
 }
 
-// Event listeners
-window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("signin").addEventListener("click", signIn);
-  document.getElementById("postItemBtn").addEventListener("click", () => {
-    const title = document.getElementById("itemTitle").value;
-    const price = parseFloat(document.getElementById("itemPrice").value);
-    postItem(title, price);
+// Events
+window.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("signin").addEventListener("click",signIn);
+  document.getElementById("postItemBtn").addEventListener("click",()=>{
+    const t=document.getElementById("itemTitle").value;
+    const p=parseFloat(document.getElementById("itemPrice").value);
+    postItem(t,p);
   });
-  loadItems(); // load items on page load if already signed in
+  loadItems();
 });
