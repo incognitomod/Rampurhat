@@ -1,36 +1,94 @@
-// Example: Firebase Authentication with signInWithRedirect
-// Make sure Firebase SDK is included in index.html if you are using Firebase
+// Firebase imports from CDN
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } 
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } 
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Dummy function to simulate sign-in if you are not using Firebase yet
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAIBaheScEGv-5j8EV-xccCr6m0V9MmkpA",
+  authDomain: "rampurhat-one.firebaseapp.com",
+  projectId: "rampurhat-one",
+  storageBucket: "rampurhat-one.firebasestorage.app",
+  messagingSenderId: "648860882666",
+  appId: "1:648860882666:web:d24b3ebc6f67a5f6bc2993",
+  measurementId: "G-F5TJGPF9F3"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
+
+// Sign-in function for mobile
 function signIn() {
-  try {
-    // Save a temporary state in sessionStorage to avoid "missing initial state" error
-    sessionStorage.setItem('signin_state', 'initiated');
+  signInWithRedirect(auth, provider);
+}
 
-    // Replace this with your actual redirect logic if using Firebase:
-    // firebase.auth().signInWithRedirect(provider);
-
-    // Simulate redirect (for testing)
-    setTimeout(() => {
-      sessionStorage.setItem('signin_state', 'completed');
-      alert("Sign-in successful!");
-    }, 1000);
-
-  } catch (error) {
+// Handle redirect result after returning from Google
+getRedirectResult(auth)
+  .then((result) => {
+    if (result.user) {
+      alert("Signed in as " + result.user.email);
+      loadItems(); // load items after sign-in
+    }
+  })
+  .catch((error) => {
     console.error("Sign-in error:", error);
-    alert("Unable to sign in. Check your browser storage settings.");
+  });
+
+// Post an item to Firestore
+async function postItem(title, price) {
+  if (!auth.currentUser) {
+    alert("Sign in first!");
+    return;
+  }
+  try {
+    await addDoc(collection(db, "items"), {
+      title: title,
+      price: price,
+      uid: auth.currentUser.uid,
+      timestamp: Date.now()
+    });
+    alert("Item posted!");
+    // Clear input fields
+    document.getElementById("itemTitle").value = "";
+    document.getElementById("itemPrice").value = "";
+    loadItems(); // refresh item list
+  } catch (err) {
+    alert("Error posting: " + err.message);
   }
 }
 
-// Attach event
-document.getElementById('signinBtn').addEventListener('click', signIn);
-
-// Optional: Check if user returned from redirect
-window.addEventListener('load', () => {
-  if (sessionStorage.getItem('signin_state') === 'initiated') {
-    // Normally handle Firebase redirect result here
-    console.log("Handling redirect result...");
-    // Clear state
-    sessionStorage.removeItem('signin_state');
+// Load and display items from Firestore
+async function loadItems() {
+  const itemsList = document.getElementById("itemsList");
+  itemsList.innerHTML = ""; // clear current items
+  try {
+    const querySnapshot = await getDocs(collection(db, "items"));
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const div = document.createElement("div");
+      div.className = "itemCard";
+      div.innerHTML = `<strong>${data.title}</strong><br>Price: ₹${data.price}`;
+      itemsList.appendChild(div);
+    });
+  } catch (err) {
+    console.error("Error loading items:", err);
   }
+}
+
+// Event listeners
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("signin").addEventListener("click", signIn);
+  document.getElementById("postItemBtn").addEventListener("click", () => {
+    const title = document.getElementById("itemTitle").value;
+    const price = parseFloat(document.getElementById("itemPrice").value);
+    postItem(title, price);
+  });
+  loadItems(); // load items on page load if already signed in
 });
