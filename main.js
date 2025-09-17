@@ -1,7 +1,7 @@
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } 
+import { getAuth, GoogleAuthProvider, signInWithPopup } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs } 
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
@@ -24,29 +24,19 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
-// Sign-in
+// Sign-in using popup (avoids missing initial state error)
 function signIn() {
-  try {
-    sessionStorage.setItem('signin_state', 'initiated'); // avoid missing state
-    signInWithRedirect(auth, provider);
-  } catch(err) {
-    console.error("Sign-in failed:", err);
-  }
-}
-
-// Handle redirect result
-getRedirectResult(auth)
-  .then(result => {
-    if (result.user) {
+  signInWithPopup(auth, provider)
+    .then(result => {
       const user = result.user;
       document.getElementById("userStatus").innerText = "Signed in as " + (user.displayName || user.email);
-      loadItems();
-      sessionStorage.removeItem('signin_state');
-    }
-  })
-  .catch(err => {
-    console.error("Sign-in error:", err);
-  });
+      loadItems(); // load items after sign-in
+    })
+    .catch(err => {
+      console.error("Sign-in popup error:", err);
+      alert("Sign-in failed: " + err.message);
+    });
+}
 
 // Post an item
 async function postItem(title, price) {
