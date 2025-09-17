@@ -16,7 +16,6 @@
   --secondary-color: #FF9933;
   --bg-dark: #0F172A;
   --text-light: #F1F5F9;
-  --btn-hover: rgba(255,255,255,0.2);
 }
 
 body {
@@ -40,6 +39,7 @@ button, input {
   border: none;
   outline: none;
   margin:0.4rem 0;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 input { width: 100%; max-width: 250px; }
@@ -48,9 +48,15 @@ button {
   background: var(--secondary-color);
   color:#000;
   font-weight:600;
-  transition: background 0.3s;
 }
 button:hover { background: var(--primary-color); }
+
+/* Remove weird tap/focus flash */
+button:focus, button:active {
+  outline: none;
+  box-shadow: none;
+  background-color: var(--secondary-color);
+}
 
 .glass-card {
   background: var(--glass-bg);
@@ -67,17 +73,28 @@ button:hover { background: var(--primary-color); }
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
+/* Item posted cards spacing */
 #itemsList .itemCard {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin:0.5rem 0;
-  padding:0.8rem 1rem;
+  margin: 0.8rem 0;
+  padding: 1rem 1rem;
+  background: var(--glass-bg);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Mobile tap effect for item cards */
+#itemsList .itemCard:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
 #userStatus { margin-bottom:1rem; font-weight:500; }
 
-.container { max-width:600px; margin:0 auto; padding:0 1rem; }
+.container { max-width:650px; margin:0 auto; padding:0 1.2rem; }
 
 </style>
 </head>
