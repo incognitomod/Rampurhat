@@ -3,132 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rampurhat One</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<title>VedicPost - Hindu Scriptures & Spiritual Items</title>
+<link rel="stylesheet" href="style.css">
 <style>
-:root {
-  --glass-bg: rgba(255,255,255,0.08);
-  --glass-border: rgba(255,255,255,0.2);
-  --primary-color: #FFD700;
-  --secondary-color: #FF9933;
-  --bg-dark: #0F172A;
-  --text-light: #F1F5F9;
-}
-
-body {
-  margin:0; padding:0;
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-dark);
-  color: var(--text-light);
-}
-
-header {
-  text-align:center;
-  padding:2rem 1rem;
-}
-
-h1 { font-size:2.5rem; font-weight:700; margin-bottom:0.5rem; }
-h2 { font-size:1.75rem; margin-bottom:1rem; }
-
-button, input {
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  border: none;
-  outline: none;
-  margin:0.4rem 0;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-input { width: 100%; max-width: 250px; }
-button {
-  cursor:pointer;
-  background: var(--secondary-color);
-  color:#000;
-  font-weight:600;
-}
-button:hover { background: var(--primary-color); }
-
-/* Remove weird tap/focus flash */
-button:focus, button:active {
-  outline: none;
-  box-shadow: none;
-  background-color: var(--secondary-color);
-}
-
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 1rem 0;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.glass-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* Item posted cards spacing */
-#itemsList .itemCard {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin: 0.8rem 0;
-  padding: 1rem 1rem;
-  background: var(--glass-bg);
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-/* Mobile tap effect for item cards */
-#itemsList .itemCard:active {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-}
-
-#userStatus { margin-bottom:1rem; font-weight:500; }
-
-.container { max-width:650px; margin:0 auto; padding:0 1.2rem; }
-
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+  }
+  header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+  .item-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+  }
+  .item-card:hover {
+    transform: translateY(-2px);
+  }
+  .item-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #34495e;
+    margin-bottom: 8px;
+  }
+  .item-price {
+    font-size: 16px;
+    color: #e74c3c;
+    margin-bottom: 10px;
+  }
+  button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-start;
+  }
+  button:hover {
+    background-color: #2980b9;
+  }
+  .signin-btn {
+    margin: 20px auto;
+    display: block;
+    background-color: #27ae60;
+  }
+  .signin-btn:hover {
+    background-color: #1e8449;
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Rampurhat One</h1>
-  <p id="userStatus">Not signed in</p>
-  <button id="signin">Sign In with Google</button>
+  <h1>VedicPost</h1>
+  <p>Hindu Scriptures & Spiritual Items</p>
 </header>
 
-<main class="container">
-  <!-- Post Item Section -->
-  <section class="glass-card">
-    <h2>Post an Item</h2>
-    <input type="text" id="itemTitle" placeholder="Item Title" />
-    <input type="number" id="itemPrice" placeholder="Price in ₹" />
-    <button id="postItemBtn">Post Item</button>
-  </section>
+<div class="container">
+  <button class="signin-btn" id="signinBtn">Sign In</button>
 
-  <!-- Items Posted Section -->
-  <section class="glass-card">
-    <h2>Items Posted</h2>
-    <div id="itemsList"></div>
-  </section>
+  <div class="item-card">
+    <div class="item-title">Gita Book</div>
+    <div class="item-price">₹250</div>
+    <button>Add to Cart</button>
+  </div>
 
-  <!-- Buy Now Section -->
-  <section class="glass-card">
-    <h2>Buy Now</h2>
-    <p>Buy buttons will appear here for future implementation.</p>
-    <button disabled>Buy First Item</button>
-  </section>
-</main>
+  <div class="item-card">
+    <div class="item-title">Brass Lamp</div>
+    <div class="item-price">₹500</div>
+    <button>Add to Cart</button>
+  </div>
 
-<script type="module" src="main.js"></script>
+</div>
+
+<script src="main.js"></script>
 </body>
 </html>
