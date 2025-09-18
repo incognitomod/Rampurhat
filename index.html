@@ -1,36 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rampurhat One - Home</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Rampurhat One — Home</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-<header>
-  <h1>Rampurhat One</h1>
-  <div class="controls">
-    <select id="langToggle">
-      <option value="en">English</option>
-      <option value="bn">বাংলা</option>
-    </select>
-    <button id="darkToggle">🌑/🌕</button>
-    <span id="userStatus">Not signed in</span>
+<body data-page="index">
+  <div class="header">
+    <div class="brand">
+      <img src="" alt="" style="width:36px;height:36px;border-radius:6px;background:var(--accent)"/>
+      <h1>Rampurhat One</h1>
+      <div class="small-muted">Local marketplace & services</div>
+    </div>
+
+    <div class="controls">
+      <select id="langToggle" class="select small-btn" title="Language"></select>
+      <button id="themeToggle" class="small-btn">🌑/🌕</button>
+      <div id="authArea" class="row"></div>
+    </div>
   </div>
-</header>
 
-<main>
-  <h2>Items & Services</h2>
-  <label>Sort by Price:</label>
-  <select id="sortSelect">
-    <option value="none">Select</option>
-    <option value="low">Low → High</option>
-    <option value="high">High → Low</option>
-  </select>
+  <div class="container">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700">Browse</div>
+          <div class="small-muted">Restaurants • Shops • Services • Rides • Courier</div>
+        </div>
+        <div class="row">
+          <label class="small-muted">Sort:</label>
+          <select id="sort" class="select small-btn">
+            <option value="new">Newest</option>
+            <option value="low">Price: Low → High</option>
+            <option value="high">Price: High → Low</option>
+          </select>
+          <button id="postNav" class="small-btn">Post (Merchant)</button>
+        </div>
+      </div>
+    </div>
 
-  <div id="itemsList"></div>
-</main>
+    <div id="itemsCard" class="card">
+      <div id="itemsList" class="grid"></div>
+    </div>
 
-<script type="module" src="main.js"></script>
+    <div class="card center small-muted">
+      Want to list a shop or service? <span id="goAccount" class="link">Create merchant account</span>
+    </div>
+
+    <div class="footer">Rampurhat One — local. Built for proof-of-concept.</div>
+  </div>
+
+  <!-- modal container -->
+  <div id="modalRoot" style="display:none"></div>
+
+  <script type="module" src="main.js"></script>
 </body>
 </html>
