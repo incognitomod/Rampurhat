@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rampurhat One - Account</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Rampurhat One - Account</h1>
+  <div class="controls">
+    <button id="darkToggle">🌑/🌕</button>
+  </div>
+</header>
+
+<main>
+  <h2>Sign In / Sign Up</h2>
+  <label>Role:</label>
+  <select id="roleSelect">
+    <option value="customer">Customer</option>
+    <option value="merchant">Merchant</option>
+  </select>
+
+  <button id="googleSignInBtn">Sign In with Google</button>
+
+  <h3>Email / Password</h3>
+  <input type="email" id="emailInput" placeholder="Email">
+  <input type="password" id="passwordInput" placeholder="Password">
+  <button id="emailSignUpBtn">Sign Up</button>
+  <button id="emailSignInBtn">Sign In</button>
+
+  <button id="signOutBtn">Sign Out</button>
+</main>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
