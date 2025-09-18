@@ -1,28 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rampurhat One - Post Item</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Rampurhat One — Post</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-<header>
-  <h1>Rampurhat One - Merchant</h1>
-  <div class="controls">
-    <span id="userStatus">Not signed in</span>
-    <button id="darkToggle">🌑/🌕</button>
+<body data-page="post">
+  <div class="header">
+    <div class="brand">
+      <h1>Merchant Console</h1>
+      <div class="small-muted">Post & manage your listings</div>
+    </div>
+    <div class="controls">
+      <select id="langToggle" class="select small-btn"></select>
+      <button id="themeToggle" class="small-btn">🌑/🌕</button>
+      <div id="authArea" class="row"></div>
+    </div>
   </div>
-</header>
 
-<main>
-  <h2>Post New Item</h2>
-  <input type="text" id="itemTitle" placeholder="Item Title">
-  <input type="number" id="itemPrice" placeholder="Price">
-  <input type="url" id="itemImage" placeholder="Image URL (optional)">
-  <button id="postItemBtn">Post Item</button>
-</main>
+  <div class="container">
+    <div class="card">
+      <h3>Create / Edit Item</h3>
+      <div class="form-row">
+        <div>
+          <label>Item Title</label>
+          <input id="itemTitle" placeholder="e.g., Homemade Samosa" />
+        </div>
+        <div>
+          <label>Price (₹)</label>
+          <input id="itemPrice" type="number" placeholder="100" />
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <label>Image URL (optional)</label>
+        <input id="itemImage" placeholder="https://..." />
+      </div>
+      <div style="margin-top:12px;">
+        <button id="postItemBtn" class="btn">Post Item</button>
+        <button id="clearMyItems" class="small-btn">Clear My Items</button>
+      </div>
+    </div>
 
-<script type="module" src="main.js"></script>
+    <div class="card">
+      <h3>Your Listings</h3>
+      <div id="merchantItems" class="grid"></div>
+    </div>
+
+    <div class="footer small-muted">Only merchants see Edit/Delete for their items.</div>
+  </div>
+
+  <div id="modalRoot" style="display:none"></div>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
