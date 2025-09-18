@@ -1,59 +1,28 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Rampurhat One — Home</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rampurhat One</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="main.js"></script>
 </head>
-<body data-page="index">
-  <div class="header">
-    <div class="brand">
-      <img src="" alt="" style="width:36px;height:36px;border-radius:6px;background:var(--accent)"/>
-      <h1>Rampurhat One</h1>
-      <div class="small-muted">Local marketplace & services</div>
-    </div>
-
+<body>
+  <header>
+    <h1>Rampurhat One</h1>
     <div class="controls">
-      <select id="langToggle" class="select small-btn" title="Language"></select>
-      <button id="themeToggle" class="small-btn">🌑/🌕</button>
-      <div id="authArea" class="row"></div>
+      <button id="themeToggle">🌕</button>
+      <button id="langToggle">বাংলা</button>
     </div>
-  </div>
-
-  <div class="container">
-    <div class="card">
-      <div class="row" style="justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-weight:700">Browse</div>
-          <div class="small-muted">Restaurants • Shops • Services • Rides • Courier</div>
-        </div>
-        <div class="row">
-          <label class="small-muted">Sort:</label>
-          <select id="sort" class="select small-btn">
-            <option value="new">Newest</option>
-            <option value="low">Price: Low → High</option>
-            <option value="high">Price: High → Low</option>
-          </select>
-          <button id="postNav" class="small-btn">Post (Merchant)</button>
-        </div>
-      </div>
+  </header>
+  <main>
+    <h2>Welcome</h2>
+    <p>Connecting customers with local merchants</p>
+    <div class="buttons">
+      <a href="signup-customer.html" class="btn">Create Account as Customer</a>
+      <a href="signup-merchant.html" class="btn">Create Account as Merchant</a>
+      <a href="#" id="loginLink" class="btn-outline">Already have an account? Login</a>
     </div>
-
-    <div id="itemsCard" class="card">
-      <div id="itemsList" class="grid"></div>
-    </div>
-
-    <div class="card center small-muted">
-      Want to list a shop or service? <span id="goAccount" class="link">Create merchant account</span>
-    </div>
-
-    <div class="footer">Rampurhat One — local. Built for proof-of-concept.</div>
-  </div>
-
-  <!-- modal container -->
-  <div id="modalRoot" style="display:none"></div>
-
-  <script type="module" src="main.js"></script>
+  </main>
 </body>
 </html>
